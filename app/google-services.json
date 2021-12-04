@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1096970418405",
+    "project_id": "car-game-eb178",
+    "storage_bucket": "car-game-eb178.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096970418405:android:2f222bd32c46991ceabc0c",
+        "android_client_info": {
+          "package_name": "com.itay.hw21"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1096970418405-odphkj42mg1ovpisfdagsspmr017pmkv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-cAv4S1ZD05colXn1s_Mt5fRt3Ov9FD4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1096970418405-odphkj42mg1ovpisfdagsspmr017pmkv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

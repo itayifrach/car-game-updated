@@ -49,6 +49,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         offset_x = displayMetrics.widthPixels/6f;
         offset_y = displayMetrics.heightPixels + car.getHeight();
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.background_music);
+        mediaPlayer.isLooping();
+        mediaPlayer.start();
 
     }
 
@@ -59,6 +62,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 int random_lane = rand.nextInt(dynamites.length);
+                if(dynamites_lane[random_lane] == 1) {
+                    return;
+                }
                 dynamites_lane[random_lane] = 1;
                 ImageView random_dynamite = dynamites[random_lane];
 
@@ -91,7 +97,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }else if(lane == currentLane) {
            Log.d("Checkhit","There was an hit!" + Math.abs(car_location[1] - dynamite_location[1]));
 
-            if(Math.abs(car_location[1] - dynamite_location[1]) < 5) {
+            if(Math.abs(car_location[1] - dynamite_location[1]) < 8) {
             car.setImageResource(R.drawable.explosion);
                 MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.sound_explosion);
                 mediaPlayer.start();

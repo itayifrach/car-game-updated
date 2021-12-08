@@ -22,4 +22,5 @@
         android:text="Score: 10">
 
     </TextView>
+
 </LinearLayout>

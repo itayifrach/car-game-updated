@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
    <TextView
        android:layout_width="wrap_content"
@@ -23,6 +23,17 @@
         android:text="Start Game"
         android:textStyle="bold"
         android:textSize="32sp"></Button>
+
+    <Button
+        android:id="@+id/sensors_Mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sensors mode"
+        android:textStyle="bold"
+        android:textSize="20sp"></Button>
+
+
+
 
     <Button
         android:id="@+id/btn_leaderboard"

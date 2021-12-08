@@ -7,7 +7,7 @@
     android:background="@drawable/background"
     android:orientation="vertical"
 
-    tools:context=".GameActivity">
+    tools:context=".activities.GameActivity">
 
     <LinearLayout
         android:id="@+id/life_layout"
@@ -19,6 +19,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/currenScore_TV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:paddingHorizontal="8dp"
+            android:text="Timer"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:textStyle="bold"
+
+            />
+
+        <View
+            android:layout_width="100dp"
+            android:layout_weight="5"
+            android:layout_height="match_parent"/>
 
         <ImageView
             android:id="@+id/life_1"
@@ -41,6 +59,9 @@
             android:src="@drawable/heart_filled">
 
         </ImageView>
+
+
+
     </LinearLayout>
 
     <LinearLayout
@@ -155,6 +176,5 @@
         </ImageButton>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

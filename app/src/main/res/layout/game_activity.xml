@@ -24,9 +24,9 @@
             android:id="@+id/currenScore_TV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
             android:paddingHorizontal="8dp"
             android:text="Timer"
+            android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="30sp"
             android:textStyle="bold"
@@ -35,8 +35,8 @@
 
         <View
             android:layout_width="100dp"
-            android:layout_weight="5"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_weight="5" />
 
         <ImageView
             android:id="@+id/life_1"
@@ -45,6 +45,7 @@
             android:src="@drawable/heart_filled">
 
         </ImageView>
+
         <ImageView
             android:id="@+id/life_2"
             android:layout_width="wrap_content"
@@ -52,6 +53,7 @@
             android:src="@drawable/heart_filled">
 
         </ImageView>
+
         <ImageView
             android:id="@+id/life_3"
             android:layout_width="wrap_content"
@@ -59,7 +61,6 @@
             android:src="@drawable/heart_filled">
 
         </ImageView>
-
 
 
     </LinearLayout>
@@ -70,7 +71,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-
         app:layout_constraintTop_toBottomOf="@id/life_layout">
 
 
@@ -126,7 +126,74 @@
             android:layout_height="50dp"
             android:layout_gravity="top"
             android:layout_weight="2"
+
             android:src="@drawable/dynamite"></ImageView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/life_layout"
+        android:gravity="top"
+        >
+
+
+        <ImageView
+            android:id="@+id/coin1"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/coin" />
+
+        <ImageView
+            android:id="@+id/coin2"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/coin"
+
+            />
+
+        <ImageView
+            android:id="@+id/coin3"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/coin"
+
+            />
+
+        <ImageView
+            android:id="@+id/coin4"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/coin"
+
+            />
+
+        <ImageView
+            android:id="@+id/coin5"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/coin"
+
+            />
+
+        <ImageView
+            android:id="@+id/coin6"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/coin"
+
+            />
 
 
     </LinearLayout>

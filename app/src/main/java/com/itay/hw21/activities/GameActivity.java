@@ -4,6 +4,7 @@ import static com.itay.hw21.activities.MainActivity.GAME_MODE;
 
 import android.Manifest;
 import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
@@ -32,6 +33,7 @@ import androidx.core.app.ActivityCompat;
 
 import com.itay.hw21.R;
 import com.itay.hw21.Utils;
+
 import com.itay.hw21.database.DBManager;
 import com.itay.hw21.models.Coordinate;
 import com.itay.hw21.models.DirectionAction;
@@ -45,13 +47,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private ImageView car;
     private ImageView[] dynamites = new ImageView[6];
+    private ImageView[] coins = new ImageView[6];
     private ImageView life_1, life_2, life_3;
     private ImageButton arrow_left;
     private ImageButton arrow_right;
-    private MediaPlayer mediaPlayer, mediaPlayer1;
+    private MediaPlayer mediaPlayer, mediaPlayer1,mediaPlayer2;
     private TextView timerTv;
 
-
+private int coinNum=0;
     // the current lane the car is in
     private int currentLane = 3;
     // the current amount of lives
@@ -60,9 +63,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private int length;
     // timers
     private Timer dynamite_timer, game_timer = new Timer(), stopwatch = new Timer();
-    private Random rand = new Random();
+    private Random rand1 = new Random();
+    private Random rand2 = new Random();
+    private Random rand3= new Random();
     // indicators for the dynamite lanes
     private int[] dynamites_lane = {0, 0, 0, 0, 0, 0};
+    private int[] coins_lane = {0, 0, 0, 0, 0, 0};
+
     private boolean canMove = true;
     // car and dynamite move-by
     private float offset_x, offset_y;
@@ -124,7 +131,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         dynamite_timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                int random_lane = rand.nextInt(dynamites.length);
+                rand2=new Random();
+                int random_coins_lane= rand2.nextInt(coins.length);
+                int random_lane =rand1.nextInt(dynamites.length);
+                int random_lane_d2=rand3.nextInt(dynamites.length);
                 // executes once at game start
                 if (startTime == null) {
                     startTime = System.currentTimeMillis();
@@ -141,25 +151,73 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 if (dynamites_lane[random_lane] == 1) {
                     return;
+
                 }
+                if (coins_lane[random_coins_lane]==1) {
+                    return;
+                }
+                coins_lane[random_coins_lane]=1;
                 dynamites_lane[random_lane] = 1;
+                dynamites_lane[random_lane_d2] = 1;
+                ImageView random_coin = coins[random_coins_lane];
+                ImageView random_dynamite2 = dynamites[random_lane];
                 ImageView random_dynamite = dynamites[random_lane];
 
                 runOnUiThread(() -> {
+                    random_dynamite2.setY(-200);
+                    random_dynamite2.setVisibility(View.VISIBLE);
+                    random_dynamite2.animate()
+                            .y(offset_y)
+                            .setUpdateListener(animation -> {
+                                checkHit(random_lane_d2, random_dynamite2);
+                            })
+                            .setDuration(3200)
+                            .start();
+                    random_coin.setY(-200);
+                    random_coin.setVisibility(View.VISIBLE);
+                    random_coin.animate().y(offset_y).setUpdateListener((ValueAnimator animation) -> {
+                        checkCoinHit(random_coins_lane, random_coin);
+                    }).setDuration(3200).start();
                     random_dynamite.setY(-200);
                     random_dynamite.setVisibility(View.VISIBLE);
                     random_dynamite.animate()
                             .y(offset_y)
-                            .setUpdateListener(animation -> {
-                                checkHit(random_lane, random_dynamite);
-                            })
-                            .setDuration(4000)
+                            .setUpdateListener(animation -> checkHit(random_lane, random_dynamite))
+                            .setDuration(3200)
                             .start();
                 });
 
             }
-        }, 2000, 2000);
+        }, 2000, 1000);
     }
+
+    private void checkCoinHit(int lane, ImageView coin) {
+            int[] car_location = new int[2];
+            int[] coin_location = new int[2];
+            car.getLocationOnScreen(car_location);
+            coin.getLocationOnScreen(coin_location);
+            if (coin_location[1] >= offset_y) {
+                coin.setVisibility(View.INVISIBLE);
+                coins_lane[lane] = 0;
+            } else if (lane == currentLane) {
+
+                if (Math.abs(car_location[1] - coin_location[1]) < 20) {
+                    coinNum++;
+                    mediaPlayer2=MediaPlayer.create(this, R.raw.coincollect);
+                    mediaPlayer2.start();
+                    for (int i = 0; i < coins.length; i++) {
+                        coins_lane[i] = 0;
+                        coins[i].setVisibility(View.INVISIBLE);
+                        coins[i].setY(-200f);
+                    }
+
+
+
+                }
+            }
+    }
+
+
 
     private Long getTimeElapsed() {
         long timeElapsed = System.currentTimeMillis() - startTime;
@@ -185,6 +243,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 mediaPlayer1 = MediaPlayer.create(this, R.raw.sound_explosion);
                 mediaPlayer1.start();
                 for (int i = 0; i < dynamites.length; i++) {
+                    coins_lane[i]=0;
+                    coins[i].setVisibility(View.INVISIBLE);
+                    coins[i].setY(-200f);
                     dynamites_lane[i] = 0;
                     dynamites[i].setVisibility(View.INVISIBLE);
                     dynamites[i].setY(-200f);
@@ -209,7 +270,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         canMove = true;
                         mediaPlayer.seekTo(length);
                         mediaPlayer.start();
-                        mediaPlayer.start();
                         startDynamiteTimers();
                     }
                 }, 3000);
@@ -227,11 +287,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             }
         }, 3000);
 
-        Score score = new Score(getTimeElapsed(), locationCoordinate);
+        Score score = new Score(getTimeElapsed()+(coinNum* 10000L),
+                locationCoordinate);
         DBManager.getInstance().addNewScore(score, unused -> Log.d("addNew Score", "Successfuly added new score")
-                , e -> {
-                    Log.d("addNew Score", e.getMessage());
-                });
+                , e -> Log.d("addNew Score", e.getMessage()));
     }
 
     private void showMessage(String msg) {
@@ -243,25 +302,34 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         for (int d_index = 0; d_index < 6; d_index++) {
             switch (d_index) {
                 case 0:
+                    coins[d_index] = findViewById(R.id.coin1);
                     dynamites[d_index] = findViewById(R.id.dynamite_1);
                     break;
                 case 1:
                     dynamites[d_index] = findViewById(R.id.dynamite_2);
+                    coins[d_index] = findViewById(R.id.coin2);
                     break;
                 case 2:
                     dynamites[d_index] = findViewById(R.id.dynamite_3);
+                    coins[d_index] = findViewById(R.id.coin3);
                     break;
                 case 3:
+                    coins[d_index] = findViewById(R.id.coin4);
                     dynamites[d_index] = findViewById(R.id.dynamite_4);
                     break;
                 case 4:
+                    coins[d_index] = findViewById(R.id.coin5);
                     dynamites[d_index] = findViewById(R.id.dynamite_5);
                     break;
                 case 5:
+                    coins[d_index] = findViewById(R.id.coin6);
                     dynamites[d_index] = findViewById(R.id.dynamite_6);
                     break;
             }
             dynamites[d_index].setVisibility(View.INVISIBLE);
+            coins[d_index].setVisibility(View.INVISIBLE);
+
+
         }
         arrow_left = findViewById(R.id.arrow_left);
         arrow_right = findViewById(R.id.arrow_right);

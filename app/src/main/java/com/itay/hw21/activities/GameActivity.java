@@ -5,14 +5,13 @@ import static com.itay.hw21.activities.MainActivity.GAME_MODE;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.hardware.TriggerEvent;
-import android.hardware.TriggerEventListener;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -33,7 +32,6 @@ import androidx.core.app.ActivityCompat;
 
 import com.itay.hw21.R;
 import com.itay.hw21.Utils;
-
 import com.itay.hw21.database.DBManager;
 import com.itay.hw21.models.Coordinate;
 import com.itay.hw21.models.DirectionAction;
@@ -44,7 +42,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener, LocationListener, SensorEventListener {
-
+//views
     private ImageView car;
     private ImageView[] dynamites = new ImageView[6];
     private ImageView[] coins = new ImageView[6];
@@ -80,7 +78,7 @@ private int coinNum=0;
     //sensors
     private SensorManager sensorManager;
     private Sensor sensor;
-    private TriggerEventListener triggerEventListener;
+    private SensorEventListener accSensorEventListener;
 
 
     @Override
@@ -111,17 +109,48 @@ private int coinNum=0;
             Intent intent = getIntent();
             String mode = intent.getStringExtra(GAME_MODE);
             if (mode.equals("Sensors")) {
+                initsensor();
+
+
+                    accSensorEventListener=new SensorEventListener() {
+                    @Override
+                    public void onSensorChanged(SensorEvent event) {
+                        float x = event.values[0];
+                        if (x <= -6) {
+                            DirectionAction action = DirectionAction.RIGHT;
+                            move(action);
+                        } else if (x >= 6) {
+                            DirectionAction action = DirectionAction.LEFT;
+                            move(action);
+                        }
+                    }
+
+
+
+                    @Override
+                    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+                    }
+                };
 
                 // hide arrows
                 arrow_right.setVisibility(View.INVISIBLE);
                 arrow_left.setVisibility(View.INVISIBLE);
-
+            //ordinary Game Mode
             } else {
                 arrow_right.setOnClickListener(this);
                 arrow_left.setOnClickListener(this);
             }
-        }
+        }//request locatio
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+    }
+
+    private void initsensor() {
+        sensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        sensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    }
+    public boolean issensorExist(int sensorType){
+        return (sensorManager.getDefaultSensor(sensorType)!=null);
     }
 
     private void startDynamiteTimers() {
@@ -134,7 +163,6 @@ private int coinNum=0;
                 rand2=new Random();
                 int random_coins_lane= rand2.nextInt(coins.length);
                 int random_lane =rand1.nextInt(dynamites.length);
-                int random_lane_d2=rand3.nextInt(dynamites.length);
                 // executes once at game start
                 if (startTime == null) {
                     startTime = System.currentTimeMillis();
@@ -149,41 +177,32 @@ private int coinNum=0;
                         }
                     }, 1, 1);
                 }
-                if (dynamites_lane[random_lane] == 1) {
-                    return;
-
-                }
+                //make sure no 2 dynamites/coins fall at the same lane
                 if (coins_lane[random_coins_lane]==1) {
                     return;
                 }
+                if (dynamites_lane[random_lane] == 1) {
+                    return;
+                }
+                //choose the lane for coin/dynamite to fall from
                 coins_lane[random_coins_lane]=1;
                 dynamites_lane[random_lane] = 1;
-                dynamites_lane[random_lane_d2] = 1;
                 ImageView random_coin = coins[random_coins_lane];
-                ImageView random_dynamite2 = dynamites[random_lane];
                 ImageView random_dynamite = dynamites[random_lane];
 
                 runOnUiThread(() -> {
-                    random_dynamite2.setY(-200);
-                    random_dynamite2.setVisibility(View.VISIBLE);
-                    random_dynamite2.animate()
-                            .y(offset_y)
-                            .setUpdateListener(animation -> {
-                                checkHit(random_lane_d2, random_dynamite2);
-                            })
-                            .setDuration(3200)
-                            .start();
+                    //animation
                     random_coin.setY(-200);
                     random_coin.setVisibility(View.VISIBLE);
                     random_coin.animate().y(offset_y).setUpdateListener((ValueAnimator animation) -> {
                         checkCoinHit(random_coins_lane, random_coin);
-                    }).setDuration(3200).start();
+                    }).setDuration(2200).start();
                     random_dynamite.setY(-200);
                     random_dynamite.setVisibility(View.VISIBLE);
                     random_dynamite.animate()
                             .y(offset_y)
                             .setUpdateListener(animation -> checkHit(random_lane, random_dynamite))
-                            .setDuration(3200)
+                            .setDuration(2200)
                             .start();
                 });
 
@@ -196,19 +215,20 @@ private int coinNum=0;
             int[] coin_location = new int[2];
             car.getLocationOnScreen(car_location);
             coin.getLocationOnScreen(coin_location);
+            //not a catch
             if (coin_location[1] >= offset_y) {
                 coin.setVisibility(View.INVISIBLE);
                 coins_lane[lane] = 0;
             } else if (lane == currentLane) {
-
+                //catch
                 if (Math.abs(car_location[1] - coin_location[1]) < 20) {
                     coinNum++;
                     mediaPlayer2=MediaPlayer.create(this, R.raw.coincollect);
                     mediaPlayer2.start();
                     for (int i = 0; i < coins.length; i++) {
-                        coins_lane[i] = 0;
-                        coins[i].setVisibility(View.INVISIBLE);
-                        coins[i].setY(-200f);
+                        coins_lane[currentLane] = 0;
+                        coins[currentLane].setVisibility(View.INVISIBLE);
+                        coins[currentLane].setY(-200f);
                     }
 
 
@@ -230,12 +250,13 @@ private int coinNum=0;
         int[] dynamite_location = new int[2];
         car.getLocationOnScreen(car_location);
         dynamite.getLocationOnScreen(dynamite_location);
+        //not a hit
         if (dynamite_location[1] >= offset_y) {
             dynamite.setVisibility(View.INVISIBLE);
             dynamite.setY(-200f);
             dynamites_lane[lane] = 0;
         } else if (lane == currentLane) {
-
+           //hit
             if (Math.abs(car_location[1] - dynamite_location[1]) < 20) {
                 car.setImageResource(R.drawable.explosion);
                 mediaPlayer.pause();
@@ -243,14 +264,11 @@ private int coinNum=0;
                 mediaPlayer1 = MediaPlayer.create(this, R.raw.sound_explosion);
                 mediaPlayer1.start();
                 for (int i = 0; i < dynamites.length; i++) {
-                    coins_lane[i]=0;
-                    coins[i].setVisibility(View.INVISIBLE);
-                    coins[i].setY(-200f);
                     dynamites_lane[i] = 0;
                     dynamites[i].setVisibility(View.INVISIBLE);
                     dynamites[i].setY(-200f);
                 }
-                canMove = false;
+                canMove= false;
                 dynamite_timer.cancel();
                 if (lives == 0) {
                     endGame();
@@ -279,6 +297,9 @@ private int coinNum=0;
     }
 
     private void endGame() {
+        dynamite_timer.cancel();
+        game_timer.cancel();
+        mediaPlayer.stop();
         showMessage("All lives ran out,you lasted: ...");
         new Timer().schedule(new TimerTask() {
             @Override
@@ -362,12 +383,16 @@ private int coinNum=0;
     @Override
     protected void onPause() {
         super.onPause();
+        endGame();
+        finish();
         dynamite_timer.cancel();
+        sensorManager.unregisterListener(accSensorEventListener);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        sensorManager.registerListener(accSensorEventListener,sensor,400);
         startDynamiteTimers();
     }
 
@@ -375,6 +400,8 @@ private int coinNum=0;
     protected void onDestroy() {
         super.onDestroy();
         dynamite_timer.cancel();
+        endGame();
+        finish();
     }
 
     @Override
@@ -450,4 +477,5 @@ private int coinNum=0;
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
 }

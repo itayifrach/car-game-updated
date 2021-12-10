@@ -43,7 +43,6 @@ public class score_leade extends FragmentActivity implements OnScoresResponse, O
         if(mapFragment!=null)
         mapFragment.getMapAsync(this);
     }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -80,5 +79,11 @@ public class score_leade extends FragmentActivity implements OnScoresResponse, O
     public void Clicked(Score score) {
         // other logic..
         moveCamera(score);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
     }
 }

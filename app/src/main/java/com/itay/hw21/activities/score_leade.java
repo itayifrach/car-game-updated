@@ -16,7 +16,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.itay.hw21.R;
-import com.itay.hw21.Utils;
+import com.itay.hw21.models.Utils;
 import com.itay.hw21.adapters.ScoreBoardAdapter;
 import com.itay.hw21.database.DBManager;
 import com.itay.hw21.models.Coordinate;

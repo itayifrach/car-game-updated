@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.itay.hw21.R;
-import com.itay.hw21.Utils;
+import com.itay.hw21.models.Utils;
 import com.itay.hw21.models.OnItemClickListener;
 import com.itay.hw21.models.Score;
 

@@ -1,4 +1,4 @@
-package com.itay.hw21;
+package com.itay.hw21.models;
 
 import android.os.Build;
 

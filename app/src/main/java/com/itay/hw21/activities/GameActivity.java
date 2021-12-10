@@ -31,7 +31,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.itay.hw21.R;
-import com.itay.hw21.Utils;
+import com.itay.hw21.models.Utils;
 import com.itay.hw21.database.DBManager;
 import com.itay.hw21.models.Coordinate;
 import com.itay.hw21.models.DirectionAction;
@@ -100,7 +100,7 @@ private int coinNum=0;
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         //sensor
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-
+//ask permission to location on user device
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -110,9 +110,8 @@ private int coinNum=0;
             String mode = intent.getStringExtra(GAME_MODE);
             if (mode.equals("Sensors")) {
                 initsensor();
-
-
                     accSensorEventListener=new SensorEventListener() {
+                        //sensor movement
                     @Override
                     public void onSensorChanged(SensorEvent event) {
                         float x = event.values[0];
@@ -148,6 +147,7 @@ private int coinNum=0;
     private void initsensor() {
         sensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
         sensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
     }
     public boolean issensorExist(int sensorType){
         return (sensorManager.getDefaultSensor(sensorType)!=null);

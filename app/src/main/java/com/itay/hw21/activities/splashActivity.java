@@ -17,6 +17,7 @@ public class splashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    //Time that splash screen will show on screen
                     sleep(4000);
                 }
                 catch(Exception e) {

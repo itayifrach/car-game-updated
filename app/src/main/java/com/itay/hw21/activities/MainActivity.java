@@ -23,13 +23,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(this);
+//Ask Permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED ||
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},0);
         }
+        //Buttons init
         btn_leaderBoard = findViewById(R.id.btn_leaderboard);
         btn_Sensors_Mode=findViewById(R.id.sensors_Mode);
         btn_leaderBoard.setOnClickListener(new View.OnClickListener() {
+           //All activity switches
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,score_leade.class);

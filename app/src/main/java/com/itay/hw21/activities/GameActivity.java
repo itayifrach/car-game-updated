@@ -165,6 +165,7 @@ private int coinNum=0;
                 int random_lane =rand1.nextInt(dynamites.length);
                 // executes once at game start
                 if (startTime == null) {
+                    //start the timer
                     startTime = System.currentTimeMillis();
                     stopwatch.scheduleAtFixedRate(new TimerTask() {
                         @Override
@@ -191,12 +192,13 @@ private int coinNum=0;
                 ImageView random_dynamite = dynamites[random_lane];
 
                 runOnUiThread(() -> {
-                    //animation
+                    //coin animation
                     random_coin.setY(-200);
                     random_coin.setVisibility(View.VISIBLE);
                     random_coin.animate().y(offset_y).setUpdateListener((ValueAnimator animation) -> {
                         checkCoinHit(random_coins_lane, random_coin);
                     }).setDuration(2200).start();
+                    //dynamite animation
                     random_dynamite.setY(-200);
                     random_dynamite.setVisibility(View.VISIBLE);
                     random_dynamite.animate()
@@ -238,7 +240,7 @@ private int coinNum=0;
     }
 
 
-
+//calculate the in game time
     private Long getTimeElapsed() {
         long timeElapsed = System.currentTimeMillis() - startTime;
         return timeElapsed;
@@ -307,7 +309,7 @@ private int coinNum=0;
                 finish();
             }
         }, 3000);
-
+//saving the score
         Score score = new Score(getTimeElapsed()+(coinNum* 10000L),
                 locationCoordinate);
         DBManager.getInstance().addNewScore(score, unused -> Log.d("addNew Score", "Successfuly added new score")
@@ -317,7 +319,7 @@ private int coinNum=0;
     private void showMessage(String msg) {
         runOnUiThread(() -> Toast.makeText(this, msg, Toast.LENGTH_SHORT).show());
     }
-
+//init the views
     private void findViews() {
         car = findViewById(R.id.car);
         for (int d_index = 0; d_index < 6; d_index++) {
@@ -414,7 +416,7 @@ private int coinNum=0;
             move(action);
         }
     }
-
+//movement logic with animation
     private void move(DirectionAction directionAction) {
         if (directionAction == DirectionAction.RIGHT) {
             if (currentLane == 5 || !canMove) return;

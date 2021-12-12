@@ -225,7 +225,7 @@ private int coinNum=0;
                 coins_lane[lane] = 0;
             } else if (lane == currentLane) {
                 //catch
-                if (Math.abs(car_location[1] - coin_location[1]) < 20) {
+                if (Math.abs(car_location[1] - coin_location[1]) < 30) {
                     coinNum++;
                     mediaPlayer2=MediaPlayer.create(this, R.raw.coincollect);
                     mediaPlayer2.start();
@@ -261,7 +261,7 @@ private int coinNum=0;
             dynamites_lane[lane] = 0;
         } else if (lane == currentLane) {
            //hit
-            if (Math.abs(car_location[1] - dynamite_location[1]) < 20) {
+            if (Math.abs(car_location[1] - dynamite_location[1]) < 30) {
                 car.setImageResource(R.drawable.explosion);
                 mediaPlayer.pause();
                 length = mediaPlayer.getCurrentPosition();

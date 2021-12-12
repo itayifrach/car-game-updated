@@ -195,7 +195,9 @@ private int coinNum=0;
                     //coin animation
                     random_coin.setY(-200);
                     random_coin.setVisibility(View.VISIBLE);
-                    random_coin.animate().y(offset_y).setUpdateListener((ValueAnimator animation) -> {
+                    random_coin.animate()
+                            .y(offset_y)
+                            .setUpdateListener((ValueAnimator animation) -> {
                         checkCoinHit(random_coins_lane, random_coin);
                     }).setDuration(2200).start();
                     //dynamite animation
@@ -301,7 +303,8 @@ private int coinNum=0;
     private void endGame() {
         dynamite_timer.cancel();
         game_timer.cancel();
-        mediaPlayer.stop();
+        stopwatch.cancel();
+        mediaPlayer.reset();
         showMessage("All lives ran out,you lasted: ...");
         new Timer().schedule(new TimerTask() {
             @Override
@@ -387,7 +390,6 @@ private int coinNum=0;
         super.onPause();
         endGame();
         finish();
-        dynamite_timer.cancel();
         sensorManager.unregisterListener(accSensorEventListener);
     }
 

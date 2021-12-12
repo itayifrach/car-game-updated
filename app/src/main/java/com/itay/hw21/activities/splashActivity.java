@@ -38,3 +38,13 @@ public class splashActivity extends AppCompatActivity {
         finish();
     }
 }
+
+
+
+
+
+
+
+
+
+//itay ifrah
